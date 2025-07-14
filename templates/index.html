@@ -22,15 +22,40 @@
 
     <main>
         <div class="container">
-            <form action="/add" method="POST">
-                <input type="text" name="task" placeholder="Enter a task" required>
-                <button type="submit" id="Add-Button">Add Task</button>
+            <form action="/add" method="POST" style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <input type="text" name="taskname" placeholder="Enter a task" required style="flex-grow: 1;">
+                <button id="Add-Button" type="button" onclick="OpenForm(null, document.querySelector('input[name=taskname]').value)">Add Task</button>
             </form>
             <ul id="task-list">
                 {% for task in tasks %}
-                    <li>{{ task }}</li>
+                    <li>
+                        <span class="task-label">{{ task.name }}</span>
+                        {% if task.due_date %}
+                            <span class="due-date">{{ task.due_date }}</span>
+                        {% endif %}
+                    </li>
                 {% endfor %}
             </ul>
         </div>
+
+        <!-- Popup Overlay and Form -->
+        <div id="popup-overlay"></div>
+        <div id="popup-form">
+            <form action="/add" method="POST" id="add-task-form">
+                <span id="close-popup" onclick="CloseForm()">&times;</span>
+                <div id="taskname-display" style="margin-bottom: 10px; font-size: 1.1rem;"></div>
+                <input type="text" name="taskname" id="taskname-input" placeholder="Task name" required>
+                <input type="hidden" name="task_index" id="task-index-hidden">
+                <input type="date" name="due_date" id="due_date">
+                <select name="repeat" id="repeat">
+                    <option value="">No Repeat</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                </select>
+                <button type="submit" id="Add-Button">Save</button>
+            </form>
+        </div>
+    </main>
 </body>
 </html>
