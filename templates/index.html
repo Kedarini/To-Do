@@ -31,8 +31,20 @@
                     <li>
                         <span class="task-label">{{ task.name }}</span>
                         {% if task.due_date %}
-                            <span class="due-date">{{ task.due_date }}</span>
+                            {% set due = task.due_date %}
+                            {% if due == today|string %}
+                                <span class="due-date due-today">today</span>
+                            {% elif due == yesterday|string %}
+                                <span class="due-date due-special">yesterday</span>
+                            {% elif due == tomorrow|string %}
+                                <span class="due-date due-special">tomorrow</span>
+                            {% else %}
+                                <span class="due-date">{{ task.due_date }}</span>
+                            {% endif %}
                         {% endif %}
+                        <form action="/delete/{{ loop.index0 }}" method="POST" class="delete-form" style="display:inline;">
+                            <button type="submit" class="delete-btn" title="Delete Task">&#128465;</button>
+                        </form>
                     </li>
                 {% endfor %}
             </ul>
@@ -57,5 +69,12 @@
             </form>
         </div>
     </main>
+
+    {% set today = (namespace(value='')) %}
+    {% set yesterday = (namespace(value='')) %}
+    {% set tomorrow = (namespace(value='')) %}
+    {% set today.value = (now().date() if now else None) %}
+    {% set yesterday.value = (today.value - timedelta(days=1)) if today.value else None %}
+    {% set tomorrow.value = (today.value + timedelta(days=1)) if today.value else None %}
 </body>
 </html>
